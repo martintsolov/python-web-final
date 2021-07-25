@@ -11,3 +11,6 @@ class Truck(models.Model):
 
     def __repr__(self):
         return f'{self.brand} {self.reg_number}'
+
+    def __str__(self):
+        return f'{self.brand} {self.reg_number}'

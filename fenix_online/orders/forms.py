@@ -1,7 +1,9 @@
 from django import forms
 from django.forms import SelectDateWidget
 
+from fenix_online.containers.models import Container
 from fenix_online.orders.models import Order
+from fenix_online.trucks.models import Truck
 
 
 class CreateOrderForm(forms.ModelForm):
@@ -11,13 +13,18 @@ class CreateOrderForm(forms.ModelForm):
         fields = ['container_size', 'wanted_date']
 
 
-class ClientEditOrderForm(forms.ModelForm):
-    class Meta:
-        model = Order
-        fields = ['container_size', 'wanted_date']
+class ClientEditOrderForm(CreateOrderForm):
+    pass
 
 
 class AdminEditOrderForm(forms.ModelForm):
+    container = forms.ModelChoiceField(
+        queryset=Container.objects.filter(status=True)
+    )
+    delivered_by = forms.ModelChoiceField(
+        queryset=Truck.objects.all()
+    )
+
     class Meta:
         model = Order
         fields = '__all__'

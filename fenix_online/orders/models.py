@@ -35,7 +35,6 @@ class Order(models.Model):
     )
     container = models.ForeignKey(
         Container,
-        choices=[(c.id, c.capacity) for c in Container.objects.filter(status=True)],
         on_delete=models.PROTECT,
         related_name='orders',
         null=True,
@@ -46,9 +45,9 @@ class Order(models.Model):
         default='Medium'
     )
     wanted_date = models.DateField()
+    scheduled_for = models.DateTimeField(null=True)
     delivered_by = models.ForeignKey(
         Truck,
-        choices=Truck.objects.all(),
         on_delete=models.PROTECT,
         related_name='orders',
         null=True,

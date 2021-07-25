@@ -1,6 +1,8 @@
+from django import forms
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.db import transaction
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
@@ -19,11 +21,13 @@ def client_login(request):
         if user:
             if user.is_active:
                 login(request, user)
-                return HttpResponseRedirect(reverse('create order'))
+                return HttpResponseRedirect(reverse('home'))
             else:
-                return HttpResponse('Account not active')
+                messages.error(request, 'User is not active.')
+                return HttpResponseRedirect(reverse('login'))
         else:
-            return HttpResponse('Invalid login details')
+            messages.error(request, 'Invalid login credentials. Please try again!')
+            return HttpResponseRedirect(reverse('login'))
     else:
         return render(request, 'login.html', {})
 
@@ -53,11 +57,42 @@ def client_register(request):
 
 
 @login_required
+def home(request):
+    current_user = request.user
+    current_client = Client(user_id=current_user.id)
+    context = {
+        'client': current_client,
+        'user': current_user,
+    }
+
+    return render(request, 'home.html', context)
+
+
+@login_required
+def client_logout(request):
+    logout(request)
+    return HttpResponseRedirect(reverse('login'))
+
+
+@login_required
+def client_profile(request):
+    current_user = request.user
+    client = Client.objects.get(user_id=current_user.id)
+
+    context = {
+        'user': current_user,
+        'client': client,
+    }
+
+    return render(request, 'client_profile.html', context)
+
+
+@login_required
 @transaction.atomic
 def update_client(request):
     if request.method == 'POST':
         user_form = UserForm(request.POST, instance=request.user)
-        client_form = ClientForm(request.POST, instance=request.user.client)
+        client_form = ClientForm(request.POST, instance=Client(user_id=request.user.id))
         if user_form.is_valid() and client_form.is_valid():
             user_form.save()
             client_form.save()
@@ -67,5 +102,5 @@ def update_client(request):
             messages.error(request, message='Please check you entries!')
     else:
         user_form = UserForm(instance=request.user)
-        client_form = ClientForm(instance=request.user.client)
+        client_form = ClientForm(instance=Client(user_id=request.user.id))
     return render(request, 'profile.html', {'user_form': user_form, 'client_form': client_form})

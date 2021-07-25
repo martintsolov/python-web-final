@@ -2,6 +2,33 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<style>
+    select{
+        background: rgba(225, 225, 225, 0.4);
+        border: white solid;
+        width: 100%;
+        height: 100%;
+        max-height: 40px;
+        color: white;
+        font-weight: bold;
+    }
+    select option{
+        background: rgba(0, 0, 0, 0.4)
+    }
+    .errorcontainer {
+        background: #a43f49;
+        color: #fff;
+        border-radius: 25px;
+        border: white;
+        border-width: 1px;
+        margin-top: 20px;
+        margin-bottom: 30px;
+        padding-bottom: 10px;
+    }
+    ::placeholder {
+        color: rgba(255,255,255,0.4)
+    }
+</style>
     <meta charset="utf-8"/>
     <meta
             name="viewport"
@@ -74,10 +101,97 @@
                 <div class="line-dec"></div>
                     <div class="right-content">
                         <div class="container">
+                            <br>
                             <form id="contact" action="{% url 'register' %}" method="POST">
                                 {% csrf_token %}
-                                {{ user_form }}
-                                {{ client_form }}
+                                {% if user_form.errors or client_form.errors%}
+                                    <div class="errorcontainer">
+                                    <h5 style="padding-top: 10px; text-shadow: 1px 1px 1px black">Unsuccessful registration! ❌</h5>
+                                        {% for field in user_form %}
+                                            {% for error in field.errors %}
+                                                <h6 style="font-weight: bold;"> {{ error }} </h6>
+                                            {% endfor %}
+                                        {% endfor %}
+                                        {% for field in client_form %}
+                                            {% for error in field.errors %}
+                                                <h6 style="font-weight: bold;"> {{ error }} </h6>
+                                            {% endfor %}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h5>Username</h5>
+                                        {{ user_form.username }}
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h5>Password</h5>
+                                        {{ user_form.password }}
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h5>First name</h5>
+                                        <h6 style="-webkit-text-fill-color: grey">/to be used for invoicing/</h6>
+                                        {{ user_form.first_name }}
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h5>Last name</h5>
+                                        <h6 style="-webkit-text-fill-color: grey">/to be used for invoicing/</h6>
+                                        {{ user_form.last_name }}
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h5>Company name</h5>
+                                        {{ client_form.company_name }}
+                                    </div>
+                                    <div class="col-md-6" style="padding-bottom: 30px">
+                                        <h5>Entity form</h5>
+                                        {{ client_form.company_form }}
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h5>Email</h5>
+                                        {{ user_form.email }}
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h5>EIK number</h5>
+                                        {{ client_form.eik_number }}
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h5>VAT registered</h5>
+                                        {{ client_form.vat_status }}
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h5>VAT number</h5>
+                                        {{ client_form.vat_number }}
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h5>Street address</h5>
+                                        {{ client_form.address }}
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h5>City</h5>
+                                        {{ client_form.city }}
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h5>Postcode</h5>
+                                        {{ client_form.postcode }}
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h5>Phone number</h5>
+                                        {{ client_form.phone_number }}
+                                    </div>
+                                </div>
                                         <fieldset>
                                             <button type="submit" id="form-submit" class="button">
                                                 Register
@@ -100,55 +214,5 @@
 <script src="../static/assets/js/owl-carousel.js"></script>
 <script src="../static/assets/js/lightbox.js"></script>
 <script src="../static/assets/js/custom.js"></script>
-{#<script>#}
-{#    //according to loftblog tut#}
-{#    $(".main-menu li:first").addClass("active");#}
-{##}
-{#    var showSection = function showSection(section, isAnimate) {#}
-{#        var direction = section.replace(/#/, ""),#}
-{#            reqSection = $(".section").filter(#}
-{#                '[data-section="' + direction + '"]'#}
-{#            ),#}
-{#            reqSectionPos = reqSection.offset().top - 0;#}
-{##}
-{#        if (isAnimate) {#}
-{#            $("body, html").animate(#}
-{#                {#}
-{#                    scrollTop: reqSectionPos#}
-{#                },#}
-{#                800#}
-{#            );#}
-{#        } else {#}
-{#            $("body, html").scrollTop(reqSectionPos);#}
-{#        }#}
-{#    };#}
-{##}
-{#    var checkSection = function checkSection() {#}
-{#        $(".section").each(function () {#}
-{#            var $this = $(this),#}
-{#                topEdge = $this.offset().top - 80,#}
-{#                bottomEdge = topEdge + $this.height(),#}
-{#                wScroll = $(window).scrollTop();#}
-{#            if (topEdge < wScroll && bottomEdge > wScroll) {#}
-{#                var currentId = $this.data("section"),#}
-{#                    reqLink = $("a").filter("[href*=\\#" + currentId + "]");#}
-{#                reqLink#}
-{#                    .closest("li")#}
-{#                    .addClass("active")#}
-{#                    .siblings()#}
-{#                    .removeClass("active");#}
-{#            }#}
-{#        });#}
-{#    };#}
-{##}
-{#    $(".main-menu").on("click", "a", function (e) {#}
-{#        e.preventDefault();#}
-{#        showSection($(this).attr("href"), true);#}
-{#    });#}
-{##}
-{#    $(window).scroll(function () {#}
-{#        checkSection();#}
-{#    });#}
-{#</script>#}
 </body>
 </html>

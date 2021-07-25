@@ -7,3 +7,6 @@ class Container(models.Model):
         decimal_places=1
     )
     status = models.BooleanField(default=True)
+
+    def __repr__(self):
+        return f"{self.id}, {self.capacity}"
