@@ -17,11 +17,19 @@ class UserForm(forms.ModelForm):
         fields = ['username', 'password', 'first_name', 'last_name', 'email']
 
 
+class EditUserForm(forms.ModelForm):
+    email = forms.CharField(validators=[EmailValidator],
+                            widget=forms.TextInput(attrs={'placeholder': 'example@gmail.com'}))
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'email']
+
+
 class ClientForm(forms.ModelForm):
     address = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'e.g.: Ovoshtarska 5'}))
     postcode = forms.CharField(widget=forms.TextInput(attrs={'placeholder': '4-digit postcode'}))
     phone_number = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'e.g.: +35912345678'}))
-    vat_number = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'BG123456789'}))
+    vat_number = forms.CharField(required=False, widget=forms.TextInput(attrs={'placeholder': 'BG123456789'}))
 
     class Meta:
         model = Client

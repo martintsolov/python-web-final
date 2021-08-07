@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib import messages
+from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -8,7 +9,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse
 
-from fenix_online.clients.forms import UserForm, ClientForm
+from fenix_online.clients.forms import UserForm, ClientForm, EditUserForm
 from fenix_online.clients.models import Client
 
 
@@ -44,14 +45,13 @@ def client_register(request):
             client = client_form.save(commit=False)
             client.user = user
             client.save()
-            registered = True
+            return redirect('login')
         else:
             print(user_form.errors, client_form.errors)
     else:
         user_form = UserForm()
         client_form = ClientForm()
-
-    return render(request, 'register.html', {'user_form': user_form,
+        return render(request, 'register.html', {'user_form': user_form,
                                              'client_form': client_form,
                                              'registered': registered})
 
@@ -89,18 +89,42 @@ def client_profile(request):
 
 @login_required
 @transaction.atomic
-def update_client(request):
+def edit_client_profile(request):
     if request.method == 'POST':
-        user_form = UserForm(request.POST, instance=request.user)
-        client_form = ClientForm(request.POST, instance=Client(user_id=request.user.id))
+        user_form = EditUserForm(request.POST, instance=request.user)
+        client_form = ClientForm(request.POST, instance=Client.objects.get(user_id=request.user.id))
         if user_form.is_valid() and client_form.is_valid():
             user_form.save()
             client_form.save()
             messages.success(request, message='Your profile was updated!')
-            return redirect('profile')
+            return redirect('client profile')
         else:
             messages.error(request, message='Please check you entries!')
     else:
-        user_form = UserForm(instance=request.user)
-        client_form = ClientForm(instance=Client(user_id=request.user.id))
-    return render(request, 'profile.html', {'user_form': user_form, 'client_form': client_form})
+        user_form = EditUserForm(instance=request.user)
+        client_form = ClientForm(instance=Client.objects.get(user_id=request.user.id))
+    return render(request, 'edit_client_profile.html', {'user_form': user_form, 'client_form': client_form})
+
+
+@login_required
+@transaction.atomic
+def delete_client_profile(request):
+    user = request.user
+    client = Client.objects.get(user_id=request.user.id)
+    user.delete()
+    client.delete()
+    return HttpResponseRedirect('../login')
+
+
+@login_required
+@staff_member_required
+def admin_list_clients(request):
+    users = User.objects.all()
+    clients = Client.objects.all().order_by('company_name')
+
+    context = {
+        'users': users,
+        'clients': clients,
+    }
+
+    return render(request, 'admin_clients_list.html', context)

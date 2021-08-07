@@ -48,7 +48,9 @@ class Client(models.Model):
         max_length=11,
         validators=[
             RegexValidator('^BG[0-9]{9}$', 'Wrong VAT number format.'),
-        ]
+        ],
+        blank=True,
+        null=True,
     )
     phone_number = models.CharField(
         max_length=20,
