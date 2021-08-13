@@ -1,5 +1,6 @@
 import datetime
 
+from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect, HttpResponseNotFound
@@ -7,7 +8,8 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib import messages
 
-from fenix_online.orders.forms import CreateOrderForm, ClientEditOrderForm
+from fenix_online.clients.models import Client
+from fenix_online.orders.forms import CreateOrderForm, ClientEditOrderForm, AdminEditOrderForm
 from fenix_online.orders.models import Order
 
 
@@ -17,6 +19,7 @@ def create_order(request):
         form = CreateOrderForm(request.POST)
         order = form.save(commit=False)
         order.owner = request.user
+        order.client = Client.objects.get(user_id=request.user.id)
         order.save()
         return redirect('list orders')
 
@@ -41,6 +44,17 @@ def list_orders(request):
 
 
 @login_required
+@staff_member_required
+def admin_list_orders(request):
+    orders = Order.objects.all().order_by('-created_at')
+    context = {
+        'orders': orders,
+    }
+
+    return render(request, 'admin_orders_list.html', context)
+
+
+@login_required
 def client_edit_order(request, pk):
     order_instance = Order.objects.get(pk=pk)
     active_user = request.user
@@ -61,11 +75,33 @@ def client_edit_order(request, pk):
 
 
 @login_required
+@staff_member_required
+def admin_edit_order(request, pk):
+    order_instance = Order.objects.get(pk=pk)
+    if request.method == 'POST':
+        form = AdminEditOrderForm(request.POST, instance=order_instance)
+        if form.is_valid():
+            form.save()
+            return redirect('admin list orders')
+        else:
+            print(form.errors)
+    else:
+        form = AdminEditOrderForm(instance=order_instance)
+        context = {
+            'form': form,
+            'order': order_instance,
+        }
+        return render(request, 'admin_edit_order.html', context)
+
+
+@login_required
 def delete_order(request, pk):
     order_instance = Order.objects.get(pk=pk)
     active_user = request.user
     if order_instance.owner_id == request.user.id or active_user.is_staff:
         order_instance.delete()
+        if active_user.is_staff:
+            return redirect('admin list orders')
         return redirect('list orders')
     else:
         raise PermissionDenied

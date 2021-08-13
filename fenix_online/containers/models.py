@@ -10,3 +10,6 @@ class Container(models.Model):
 
     def __repr__(self):
         return f"{self.id}, {self.capacity}"
+
+    def __str__(self):
+        return f"#{self.id}, cap. {self.capacity}m3"

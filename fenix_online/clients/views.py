@@ -128,3 +128,41 @@ def admin_list_clients(request):
     }
 
     return render(request, 'admin_clients_list.html', context)
+
+
+@login_required
+@transaction.atomic
+@staff_member_required
+def admin_edit_client_profile(request, pk):
+    user = User.objects.get(id=pk)
+    client = Client.objects.get(user_id=pk)
+
+    if request.method == 'POST':
+        user_form = EditUserForm(request.POST, instance=user)
+        client_form = ClientForm(request.POST, instance=client)
+        if user_form.is_valid() and client_form.is_valid():
+            user_form.save()
+            client_form.save()
+            messages.success(request, message='Client profile was updated!')
+            return redirect('admin list clients')
+        else:
+            messages.error(request, message='Please check you entries!')
+    else:
+        user_form = EditUserForm(instance=user)
+        client_form = ClientForm(instance=client)
+    return render(request, 'admin_edit_client.html', {
+        'user_form': user_form,
+        'client_form': client_form,
+        'user': user,
+        'client': client,})
+
+
+@login_required
+@transaction.atomic
+@staff_member_required
+def admin_delete_client(request, pk):
+    user = User.objects.get(id=pk)
+    client = Client.objects.get(user_id=pk)
+    user.delete()
+    client.delete()
+    return HttpResponseRedirect('../list_clients')

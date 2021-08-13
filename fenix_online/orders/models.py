@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.http import request
 
+from fenix_online.clients.models import Client
 from fenix_online.containers.models import Container
 from fenix_online.trucks.models import Truck
 
@@ -26,6 +27,10 @@ class Order(models.Model):
         User,
         on_delete=models.PROTECT,
         related_name='orders')
+    client = models.ForeignKey(
+        Client,
+        on_delete=models.PROTECT,
+        related_name='orders')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     status = models.CharField(
@@ -45,7 +50,7 @@ class Order(models.Model):
         default='Medium'
     )
     wanted_date = models.DateField()
-    scheduled_for = models.DateTimeField(null=True)
+    scheduled_for = models.DateField(null=True)
     delivered_by = models.ForeignKey(
         Truck,
         on_delete=models.PROTECT,

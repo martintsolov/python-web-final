@@ -1,5 +1,5 @@
 from django import forms
-from django.forms import SelectDateWidget
+from django.forms import SelectDateWidget, TimeInput
 
 from fenix_online.containers.models import Container
 from fenix_online.orders.models import Order
@@ -24,10 +24,12 @@ class AdminEditOrderForm(forms.ModelForm):
     delivered_by = forms.ModelChoiceField(
         queryset=Truck.objects.all()
     )
+    wanted_date = forms.DateField(widget=SelectDateWidget)
+    scheduled_for = forms.DateField(widget=SelectDateWidget)
 
     class Meta:
         model = Order
-        fields = '__all__'
+        fields = ['container_size', 'wanted_date', 'status', 'scheduled_for', 'delivered_by', 'container']
 
 
 class DeleteOrderForm(forms.ModelForm):
