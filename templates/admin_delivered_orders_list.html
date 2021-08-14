@@ -1,18 +1,6 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-<style>
-    .errorcontainer {
-        background: #a43f49;
-        color: #fff;
-        border-radius: 25px;
-        border: white;
-        border-width: 1px;
-        margin-top: 20px;
-        margin-bottom: 30px;
-        padding-bottom: 10px;
-    }
-</style>
 <head>
     <meta charset="utf-8"/>
     <meta
@@ -25,6 +13,7 @@
             href="https://fonts.googleapis.com/css?family=Lato:100,300,400,700,900"
             rel="stylesheet"
     />
+
 
     <title>Fenix Online</title>
     <!--
@@ -40,6 +29,27 @@
     <link rel="stylesheet" href="../static/assets/css/owl.css"/>
     <link rel="stylesheet" href="../static/assets/css/lightbox.css"/>
 </head>
+<style>
+    hr {
+        display: block;
+        margin-top: 1.0em;
+        margin-bottom: 1.0em;
+        margin-left: auto;
+        margin-right: auto;
+        border-style: inset;
+        border-width: 2px;
+        opacity: 50%;
+    }
+
+    .mycontainer {
+        background: rgba(255, 255, 255, 0.4);
+        color: #fff;
+        border-radius: 25px;
+        border: white;
+        border-width: 1px;
+        margin-top: 20px;
+    }
+</style>
 
 <body>
 <div id="page-wraper">
@@ -58,11 +68,7 @@
                 </div>
                 <nav class="main-nav" role="navigation">
                     <ul class="main-menu">
-                        <li><a href="{% url 'register' %}">Register</a></li>
-                        <li><a href="{% url 'about' %}">About</a></li>
-                        <li><a href="{% url 'contact' %}">Contact Us</a></li>
-
-
+                        <li><a href="{% url 'home' %}">Home</a></li>
                     </ul>
                 </nav>
                 <div class="social-network">
@@ -84,59 +90,78 @@
     <section class="section contact-me">
         <div class="container">
             <div class="section-heading">
-                <h2>Login</h2>
+                <h2>Delivered orders</h2>
                 <div class="line-dec"></div>
-                    <div class="right-content">
-                        <div class="container">
-                            <br>
-                            <form id="contact" action="{% url 'login' %}" method="POST">
-                                {% csrf_token %}
-                                {% if messages %}
-                                    <div class="errorcontainer">
-                                    <h5 style="padding-top: 10px; text-shadow: 1px 1px 1px black">Unsuccessful login! ❌</h5>
-                                        {% for message in messages %}
-                                            <h6 style="text-shadow: 1px 1px 1px black"> {{ message }}</h6>
-                                        {% endfor %}
-                                    </div>
-                                {% endif %}
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <fieldset>
-                                            <h5>Username</h5>
-                                            <input
-                                                    name="username"
-                                                    type="text"
-                                                    class="form-control"
-                                                    id="name"
-                                                    required="required"
-                                            />
-                                        </fieldset>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <fieldset>
-                                            <h5>Password</h5>
-                                            <input
-                                                    name="password"
-                                                    type="password"
-                                                    class="form-control"
-                                                    id="password"
-                                                    required="required"
-                                            />
-                                        </fieldset>
-                                    </div>
-                                    <div class="col-md-12">
-                                        <fieldset>
-                                            <button type="submit" id="form-submit" class="button">
-                                                Login
-                                            </button>
-                                        </fieldset>
-                                    </div>
+            </div>
+        <div class="text-center">
+                <div class="btn-group-lg">
+                    <a href="{% url 'admin list orders' %}"
+                       class="btn btn-outline-light">All</a>
+                    <a href="{% url 'admin list received' %}"
+                       class="btn btn-outline-light">Received</a>
+                    <a href="{% url 'admin list scheduled' %}"
+                       class="btn btn-outline-light">Scheduled</a>
+                    <a href="{% url 'admin list delivered' %}"
+                       class="btn btn-outline-light">Delivered</a>
+                    <a href="{% url 'admin list full' %}"
+                       class="btn btn-outline-light">Full</a>
+                    <a href="{% url 'admin list picked' %}"
+                       class="btn btn-outline-light">Picked-up</a>
+                </div>
+        </div>
+        <br>
+            {% if not orders %}
+                <h4 style="text-align: center;">You have no delivered orders</h4>
+            {% else %}
+                {% for order in orders %}
+                    <div class="mycontainer">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h5 style="margin-left: 20px; margin-top:10px; text-decoration: underline">Order #{{ order.id }} from {{ order.client.company_name }}</h5>
+                            </div>
+                            <div class="col-md-6">
+                                <h6 style="text-align: right; margin-right: 20px; margin-top:10px; color: black">Created
+                                    on: {{ order.created_at }}</h6>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6 style="margin-left: 20px; color: black">Status: {{ order.status }}</h6>
+                            </div>
+                            <div class="col-md-6">
+                                <h6 style="text-align: right; margin-right: 20px; color: black">Updated
+                                    on: {{ order.updated_at }}</h6>
+                            </div>
+                        </div>
+                        <h5 style="text-align: left; margin-left: 20px; margin-top:10px; padding-bottom:10px; text-shadow: 1px 1px 2px black">{{ order.container_size }}
+                            container #{{ order.container.id }} for {{ order.wanted_date }}</h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6 style="margin-left: 20px; color: black;">Scheduled for: {{ order.scheduled_for }}</h6>
+                                <h6 style="margin-left: 20px; color:black; padding-bottom: 10px">Delivery by: {{ order.delivered_by }}</h6>
+                            </div>
+                            <div class="col-md-6" style="text-align: right">
+                                <div class="btn-group"
+                                         style="padding-right: 20px;
+                                            padding-bottom: 10px;">
+                                        <button class="btn btn-info"
+                                                onclick="location.href='{% url 'admin edit order' order.id %}'"
+                                                type="button">
+                                            Edit Order
+                                        </button>
+                                        <a href="{% url 'delete order' order.id %}"
+                                           class="btn btn-danger"
+                                           onclick="return confirm('Are you sure you want to cancel this order?')">CANCEL
+                                            ORDER</a>
                                 </div>
-                            </form>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
+                {% endfor %}
+            {% endif %}
+
+
+        </div>
     </section>
 </div>
 

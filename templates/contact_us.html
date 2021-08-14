@@ -59,10 +59,8 @@
                 <nav class="main-nav" role="navigation">
                     <ul class="main-menu">
                         <li><a href="{% url 'register' %}">Register</a></li>
+                        <li><a href="{% url 'login' %}">Login</a></li>
                         <li><a href="{% url 'about' %}">About</a></li>
-                        <li><a href="{% url 'contact' %}">Contact Us</a></li>
-
-
                     </ul>
                 </nav>
                 <div class="social-network">
@@ -84,55 +82,18 @@
     <section class="section contact-me">
         <div class="container">
             <div class="section-heading">
-                <h2>Login</h2>
+                <h2>Contact Us</h2>
                 <div class="line-dec"></div>
                     <div class="right-content">
-                        <div class="container">
+                        <br>
+                        <div class="center-text">
                             <br>
-                            <form id="contact" action="{% url 'login' %}" method="POST">
-                                {% csrf_token %}
-                                {% if messages %}
-                                    <div class="errorcontainer">
-                                    <h5 style="padding-top: 10px; text-shadow: 1px 1px 1px black">Unsuccessful login! ❌</h5>
-                                        {% for message in messages %}
-                                            <h6 style="text-shadow: 1px 1px 1px black"> {{ message }}</h6>
-                                        {% endfor %}
-                                    </div>
-                                {% endif %}
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <fieldset>
-                                            <h5>Username</h5>
-                                            <input
-                                                    name="username"
-                                                    type="text"
-                                                    class="form-control"
-                                                    id="name"
-                                                    required="required"
-                                            />
-                                        </fieldset>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <fieldset>
-                                            <h5>Password</h5>
-                                            <input
-                                                    name="password"
-                                                    type="password"
-                                                    class="form-control"
-                                                    id="password"
-                                                    required="required"
-                                            />
-                                        </fieldset>
-                                    </div>
-                                    <div class="col-md-12">
-                                        <fieldset>
-                                            <button type="submit" id="form-submit" class="button">
-                                                Login
-                                            </button>
-                                        </fieldset>
-                                    </div>
-                                </div>
-                            </form>
+                            <h4>You can reach us at:</h4>
+                            <ul>
+                                <h5>Phone: +359898647505</h5>
+                                <h5>Email: fenixkn@abv.bg</h5>
+                            </ul>
+
                         </div>
                     </div>
                 </div>

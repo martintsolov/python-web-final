@@ -46,12 +46,62 @@ def list_orders(request):
 @login_required
 @staff_member_required
 def admin_list_orders(request):
-    orders = Order.objects.all().order_by('-created_at')
+    orders = Order.objects.all().order_by('wanted_date')
     context = {
         'orders': orders,
     }
 
     return render(request, 'admin_orders_list.html', context)
+
+
+@login_required
+@staff_member_required
+def admin_list_received_orders(request):
+    orders = Order.objects.filter(status='Received').order_by('wanted_date')
+    context = {
+        'orders': orders,
+    }
+    return render(request, 'admin_received_orders_list.html', context)
+
+
+@login_required
+@staff_member_required
+def admin_list_scheduled_orders(request):
+    orders = Order.objects.filter(status='Scheduled').order_by('wanted_date')
+    context = {
+        'orders': orders,
+    }
+    return render(request, 'admin_scheduled_orders_list.html', context)
+
+
+@login_required
+@staff_member_required
+def admin_list_delivered_orders(request):
+    orders = Order.objects.filter(status='Delivered').order_by('wanted_date')
+    context = {
+        'orders': orders,
+    }
+    return render(request, 'admin_delivered_orders_list.html', context)
+
+
+@login_required
+@staff_member_required
+def admin_list_full_orders(request):
+    orders = Order.objects.filter(status='Full').order_by('wanted_date')
+    context = {
+        'orders': orders,
+    }
+    return render(request, 'admin_full_orders_list.html', context)
+
+
+@login_required
+@staff_member_required
+def admin_list_picked_orders(request):
+    orders = Order.objects.filter(status='Picked-up').order_by('wanted_date')
+    context = {
+        'orders': orders,
+    }
+    return render(request, 'admin_picked_orders_list.html', context)
 
 
 @login_required

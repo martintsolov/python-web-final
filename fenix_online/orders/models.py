@@ -53,7 +53,7 @@ class Order(models.Model):
     scheduled_for = models.DateField(null=True)
     delivered_by = models.ForeignKey(
         Truck,
-        on_delete=models.PROTECT,
+        on_delete=models.DO_NOTHING,
         related_name='orders',
         null=True,
     )
