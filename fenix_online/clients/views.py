@@ -48,6 +48,9 @@ def client_register(request):
             return redirect('login')
         else:
             print(user_form.errors, client_form.errors)
+            return render(request, 'register.html', {'user_form': user_form,
+                                                     'client_form': client_form,
+                                                     'registered': registered})
     else:
         user_form = UserForm()
         client_form = ClientForm()

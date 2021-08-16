@@ -176,7 +176,8 @@ def dump_and_return(request, pk):
             container_size=Order.objects.get(pk=pk).container_size,
             wanted_date=datetime.date.today(),
             container_id=Order.objects.get(pk=pk).container_id,
-            owner_id=active_user.id
+            owner_id=active_user.id,
+            client_id=Order.objects.get(pk=pk).client.id,
         )
         return_order.save()
         return HttpResponseRedirect(reverse('list orders'))
